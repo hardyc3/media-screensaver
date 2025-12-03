@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="MediaScreensaver" extends="Scene"> 
+    <script type="text/brightscript" uri="MediaScreensaver.brs" />
+    
+    <children>
+        <Poster id="imagePoster"
+                loadDisplayMode="scaleToFit"
+                uri=""
+                visible="true"
+                width="1920"
+                height="1080"
+                translation="[0,0]" />
+        <Poster id="imagePosterNext"
+                loadDisplayMode="scaleToFit"
+                uri=""
+                visible="false"
+                width="1920"
+                height="1080"
+                translation="[0,0]" />
+        <Timer id = "imageTimer" 
+            repeat = "true"
+            duration = "1" />
+        
+    </children>
+</component>

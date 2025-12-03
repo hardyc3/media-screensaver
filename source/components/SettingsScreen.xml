@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="SettingsScreen" extends="Scene">
+    <children>
+        <Rectangle id="background" 
+                   width="1920" 
+                   height="1080" 
+                   color="0x000000FF" />
+        
+        <Label id="titleLabel" 
+               text="Media Screensaver Settings"
+               width="1280" 
+               height="60" 
+               horizAlign="center"
+               vertAlign="top"
+               translation="[320, 100]"
+               color="0xFFFFFFFF"
+               font="font:LargeSystemFont" />
+        
+        <Label id="serverHostLabel" 
+               text="Media Server Host/IP:"
+               width="600" 
+               height="40" 
+               horizAlign="left"
+               vertAlign="center"
+               translation="[360, 250]"
+               color="0xFFFFFFFF"
+               font="font:MediumSystemFont" />
+        
+        <TextEditBox id="serverHostInput"
+                     text=""
+                     width="800"
+                     height="50"
+                     translation="[360, 300]"
+                     font="font:MediumSystemFont"
+                     textColor="0x000000FF"
+                     backgroundColor="0xFFFFFFFF"
+                     focusedTextColor="0x000000FF"
+                     focusedBackgroundColor="0x72D7EEFF" />
+        
+        <Label id="apiEndpointLabel" 
+               text="API Endpoint:"
+               width="600" 
+               height="40" 
+               horizAlign="left"
+               vertAlign="center"
+               translation="[360, 400]"
+               color="0xFFFFFFFF"
+               font="font:MediumSystemFont" />
+        
+        <TextEditBox id="apiEndpointInput"
+                     text=""
+                     width="800"
+                     height="50"
+                     translation="[360, 450]"
+                     font="font:MediumSystemFont"
+                     textColor="0x000000FF"
+                     backgroundColor="0xFFFFFFFF"
+                     focusedTextColor="0x000000FF"
+                     focusedBackgroundColor="0x72D7EEFF" />
+        
+        <Label id="displayTimeLabel" 
+               text="Display Time (seconds):"
+               width="600" 
+               height="40" 
+               horizAlign="left"
+               vertAlign="center"
+               translation="[360, 550]"
+               color="0xFFFFFFFF"
+               font="font:MediumSystemFont" />
+        
+        <TextEditBox id="displayTimeInput"
+                     text=""
+                     width="200"
+                     height="50"
+                     translation="[360, 600]"
+                     font="font:MediumSystemFont"
+                     textColor="0x000000FF"
+                     backgroundColor="0xFFFFFFFF"
+                     focusedTextColor="0x000000FF"
+                     focusedBackgroundColor="0x72D7EEFF" />
+        
+        <Button id="saveButton"
+                text="Save Settings"
+                width="300"
+                height="60"
+                translation="[810, 700]"
+                showFocusFootprint="true"
+                focusBitmapUri="pkg:/images/focus-bg.9.png"
+                focusFootprintBitmapUri="pkg:/images/focus-bg.9.png" />
+        
+        <Button id="cancelButton"
+                text="Cancel"
+                width="300"
+                height="60"
+                translation="[360, 700]"
+                showFocusFootprint="true"
+                focusBitmapUri="pkg:/images/focus-bg.9.png"
+                focusFootprintBitmapUri="pkg:/images/focus-bg.9.png" />
+        
+        <Label id="statusLabel" 
+               text=""
+               width="1280" 
+               height="40" 
+               horizAlign="center"
+               vertAlign="center"
+               translation="[320, 800]"
+               color="0x72D7EEFF"
+               font="font:MediumSystemFont" />
+    </children>
+    
+    <script type="text/brightscript" >
+    <![CDATA[
+      function init()
+        m.top.setFocus(true)
+        m.background = m.top.findNode("background")
+        m.titleLabel = m.top.findNode("titleLabel")
+        m.serverHostLabel = m.top.findNode("serverHostLabel")
+        m.serverHostInput = m.top.findNode("serverHostInput")
+        m.apiEndpointLabel = m.top.findNode("apiEndpointLabel")
+        m.apiEndpointInput = m.top.findNode("apiEndpointInput")
+        m.displayTimeLabel = m.top.findNode("displayTimeLabel")
+        m.displayTimeInput = m.top.findNode("displayTimeInput")
+        m.saveButton = m.top.findNode("saveButton")
+        m.cancelButton = m.top.findNode("cancelButton")
+        m.statusLabel = m.top.findNode("statusLabel")
+        
+        ' Load current settings
+        loadSettings()
+        
+        ' Set up button observers
+        m.saveButton.observeField("buttonSelected", "onSaveSelected")
+        m.cancelButton.observeField("buttonSelected", "onCancelSelected")
+        
+        ' Set initial focus
+        m.serverHostInput.setFocus(true)
+        
+        ' Set up key handling
+        m.top.observeField("keyEvent", "onKeyEvent")
+      end function
+      
+      function loadSettings()
+        config = getConfig()
+        
+        if config.serverHost <> invalid
+            m.serverHostInput.text = config.serverHost
+        else
+            m.serverHostInput.text = "192.168.1.100" ' Default
+        end if
+        
+        if config.apiEndpoint <> invalid
+            m.apiEndpointInput.text = config.apiEndpoint
+        else
+            m.apiEndpointInput.text = "v1/nextImage" ' Default
+        end if
+        
+        if config.displayTime <> invalid
+            m.displayTimeInput.text = config.displayTime.toStr()
+        else
+            m.displayTimeInput.text = "20" ' Default
+        end if
+      end function
+      
+      function getConfig() as Object
+        registry = CreateObject("roRegistry")
+        section = registry.GetSection("MediaScreensaver")
+        
+        if section = invalid
+            return {}
+        end if
+        
+        config = {}
+        
+        if section.Exists("serverHost")
+            config.serverHost = section.Read("serverHost")
+        end if
+        
+        if section.Exists("apiEndpoint")
+            config.apiEndpoint = section.Read("apiEndpoint")
+        end if
+        
+        if section.Exists("displayTime")
+            config.displayTime = section.Read("displayTime").toInt()
+        end if
+        
+        return config
+      end function
+      
+      function saveConfig(config as Object)
+        registry = CreateObject("roRegistry")
+        section = registry.GetSection("MediaScreensaver")
+        
+        if section = invalid
+            section = registry.CreateSection("MediaScreensaver")
+        end if
+        
+        if config.serverHost <> invalid
+            section.Write("serverHost", config.serverHost)
+        end if
+        
+        if config.apiEndpoint <> invalid
+            section.Write("apiEndpoint", config.apiEndpoint)
+        end if
+        
+        if config.displayTime <> invalid
+            section.Write("displayTime", config.displayTime.toStr())
+        end if
+        
+        registry.Flush()
+      end function
+      
+      function onSaveSelected()
+        if validateSettings()
+            config = {
+                serverHost: m.serverHostInput.text,
+                apiEndpoint: m.apiEndpointInput.text,
+                displayTime: m.displayTimeInput.text.toInt()
+            }
+            
+            saveConfig(config)
+            m.statusLabel.text = "Settings saved successfully!"
+            m.statusLabel.color = "0x00FF00FF"
+            
+            ' Close settings after a short delay
+            m.top.timer = m.top.createChild("Timer")
+            m.top.timer.duration = 1.5
+            m.top.timer.observeField("fire", "closeSettings")
+            m.top.timer.control = "start"
+        else
+            m.statusLabel.text = "Please check your input values"
+            m.statusLabel.color = "0xFF0000FF"
+        end if
+      end function
+      
+      function onCancelSelected()
+        closeSettings()
+      end function
+      
+      function validateSettings() as Boolean
+        ' Validate server host (basic check)
+        if m.serverHostInput.text = "" or m.serverHostInput.text.Len() < 3
+            m.statusLabel.text = "Invalid server host"
+            return false
+        end if
+        
+        ' Validate API endpoint
+        if m.apiEndpointInput.text = "" or m.apiEndpointInput.text.Len() < 1
+            m.statusLabel.text = "Invalid API endpoint"
+            return false
+        end if
+        
+        ' Validate display time
+        displayTime = m.displayTimeInput.text.toInt()
+        if displayTime <= 0 or displayTime > 300
+            m.statusLabel.text = "Display time must be between 1 and 300 seconds"
+            return false
+        end if
+        
+        return true
+      end function
+      
+      function closeSettings()
+        m.top.close = true
+      end function
+      
+      function onKeyEvent(event as Object) as Boolean
+        key = event.getKey()
+        press = event.isPressed()
+        
+        if not press then return false
+        
+        if key = "back"
+            closeSettings()
+            return true
+        end if
+        
+        return false
+      end function
+    ]]>
+    </script>
+</component>

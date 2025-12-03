@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="ImageLoaderTask" extends="Task">
+    <script type="text/brightscript" uri="ImageLoaderTask.brs" />
+    <interface>
+        <field id="serverHost" type="string" />
+        <field id="apiEndpoint" type="string" />
+        <field id="imagePath" type="string" onChange="onImagePathChange" alwaysNotify="true"/>
+    </interface>
+</component>
