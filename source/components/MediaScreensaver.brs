@@ -50,7 +50,6 @@ end sub
 
 sub loadNextImage()
     print "MediaScreenSaver: Timer fired, loading next image..."
-    print "MediaScreenSaver: Creating ImageLoaderTask"
     m.imageLoader.serverHost = m.config.mediaServerHost
     m.imageLoader.apiEndpoint = m.config.apiEndpoint
     print "MediaScreenSaver: Configured ImageLoaderTask with serverHost: " + m.imageLoader.serverHost + " and apiEndpoint: " + m.imageLoader.apiEndpoint
@@ -73,16 +72,13 @@ sub onImageLoaded(event as Object)
         m.imagePosterNext.loadDisplayMode = "scaleToFit"
         m.imagePosterNext.uri = path
     else
-        print "MediaScreenSaver: Failed to load image from " + m.config.mediaServerHost
+        print "MediaScreenSaver:  Failed to load image from " + m.config.mediaServerHost
     end if
 end sub
 
 sub onNextImageLoadComplete(event as Object)
     loadStatus = event.getData()
-    print "MediaScreenSaver: Load status: " + loadStatus
-
     
-
     if loadStatus = "ready"
         print "MediaScreenSaver: Next image ready, performing transition"
         ' Swap the posters - hide current, show next
@@ -99,11 +95,7 @@ sub onNextImageLoadComplete(event as Object)
     end if
 end sub
 
-function onKeyEvent(event as Object) as Boolean
-    print "MediaScreenSaver: Key event received"
-    key = event.getKey()
-    press = event.isPressed()
-
+function onKeyEvent(key as String, press as Boolean) as Boolean
     if not press then return false
 
     if key = "options" or key = "*" ' Options key or * key
