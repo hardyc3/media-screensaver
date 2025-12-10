@@ -1,5 +1,4 @@
 function init()
-    m.top.setFocus(true)
     m.background = m.top.findNode("background")
     m.titleLabel = m.top.findNode("titleLabel")
     m.serverHostLabel = m.top.findNode("serverHostLabel")
@@ -19,18 +18,17 @@ function init()
     m.saveButton.observeField("buttonSelected", "onSaveSelected")
     m.cancelButton.observeField("buttonSelected", "onCancelSelected")
     
-    ' Set initial focus
+    ' Set up focus management
+    m.top.setFocus(true)
     m.serverHostInput.setFocus(true)
-    
-    ' Set up key handling
-    m.top.observeField("keyEvent", "onKeyEvent")
 end function
+
 
 function loadSettings()
     config = getConfig()
     
-    if config.serverHost <> invalid
-        m.serverHostInput.text = config.serverHost
+    if config.mediaServerHost <> invalid
+        m.serverHostInput.text = config.mediaServerHost
     else
         m.serverHostInput.text = "192.168.1.100" ' Default
     end if
@@ -50,24 +48,38 @@ end function
 
 function getConfig() as Object
     registry = CreateObject("roRegistry")
-    section = registry.GetSection("MediaScreensaver")
+    section = CreateObject("roRegistrySection", "MediaScreensaver")
     
-    if section = invalid
-        return {}
-    end if
     
     config = {}
-    
-    if section.Exists("serverHost")
-        config.serverHost = section.Read("serverHost")
-    end if
-    
-    if section.Exists("apiEndpoint")
-        config.apiEndpoint = section.Read("apiEndpoint")
-    end if
-    
-    if section.Exists("displayTime")
-        config.displayTime = section.Read("displayTime").toInt()
+    if section <> invalid
+        if section.Exists("serverHost")
+            print "MediaScreenSaver: Reading serverHost from registry"
+            host = section.Read("serverHost")
+            if host <> invalid and host <> ""
+                print "MediaScreenSaver: Setting mediaServerHost to: " + host
+                config.mediaServerHost = host
+            end if
+        end if
+        
+        if section.Exists("apiEndpoint")
+            endpoint = section.Read("apiEndpoint")
+            if endpoint <> invalid and endpoint <> ""
+                print "MediaScreenSaver: Setting apiEndpoint to: " + endpoint
+                config.apiEndpoint = endpoint
+            end if
+        end if
+        
+        if section.Exists("displayTime")
+            time = section.Read("displayTime")
+            if time <> invalid and time <> ""
+                displayTime = time.toInt()
+                if displayTime > 0 and displayTime <= 300
+                    print "MediaScreenSaver: Setting displayTime to: " + displayTime.toStr() + " seconds"
+                    config.displayTime = displayTime
+                end if
+            end if
+        end if
     end if
     
     return config
@@ -75,14 +87,10 @@ end function
 
 function saveConfig(config as Object)
     registry = CreateObject("roRegistry")
-    section = registry.GetSection("MediaScreensaver")
+    section = CreateObject("roRegistrySection", "MediaScreensaver")
     
-    if section = invalid
-        section = registry.CreateSection("MediaScreensaver")
-    end if
-    
-    if config.serverHost <> invalid
-        section.Write("serverHost", config.serverHost)
+    if config.mediaServerHost <> invalid
+        section.Write("serverHost", config.mediaServerHost)
     end if
     
     if config.apiEndpoint <> invalid
@@ -99,7 +107,7 @@ end function
 function onSaveSelected()
     if validateSettings()
         config = {
-            serverHost: m.serverHostInput.text,
+            mediaServerHost: m.serverHostInput.text,
             apiEndpoint: m.apiEndpointInput.text,
             displayTime: m.displayTimeInput.text.toInt()
         }
@@ -147,17 +155,69 @@ function validateSettings() as Boolean
 end function
     
 function closeSettings()
-    m.top.close = true
-    end function
-    
-    function onKeyEvent(event as Object) as Boolean
-    key = event.getKey()
-    press = event.isPressed()
-    
+    m.top.visible = false
+    if m.top.getParent() <> invalid
+        m.top.getParent().removeChild(m.top)
+    end if
+end function
+
+function onKeyEvent(key as String, press as Boolean) as Boolean
     if not press then return false
     
     if key = "back"
         closeSettings()
+        return true
+    end if
+    
+    if key = "down"
+        ' Navigate between fields
+        if m.serverHostInput.isInFocusChain()
+            m.apiEndpointInput.setFocus(true)
+        else if m.apiEndpointInput.isInFocusChain()
+            m.displayTimeInput.setFocus(true)
+        else if m.displayTimeInput.isInFocusChain()
+            m.saveButton.setFocus(true)
+        else if m.saveButton.isInFocusChain()
+            m.cancelButton.setFocus(true)
+        else if m.cancelButton.isInFocusChain()
+            m.serverHostInput.setFocus(true)
+        end if
+        return true
+    end if
+    
+    if key = "up"
+        ' Navigate between fields in reverse
+        if m.serverHostInput.isInFocusChain()
+            m.cancelButton.setFocus(true)
+        else if m.apiEndpointInput.isInFocusChain()
+            m.serverHostInput.setFocus(true)
+        else if m.displayTimeInput.isInFocusChain()
+            m.apiEndpointInput.setFocus(true)
+        else if m.saveButton.isInFocusChain()
+            m.displayTimeInput.setFocus(true)
+        else if m.cancelButton.isInFocusChain()
+            m.saveButton.setFocus(true)
+        end if
+        return true
+    end if
+    
+    if key = "left"
+        ' Navigate between buttons
+        if m.saveButton.isInFocusChain()
+            m.cancelButton.setFocus(true)
+        else if m.cancelButton.isInFocusChain()
+            m.saveButton.setFocus(true)
+        end if
+        return true
+    end if
+    
+    if key = "right"
+        ' Navigate between buttons
+        if m.saveButton.isInFocusChain()
+            m.cancelButton.setFocus(true)
+        else if m.cancelButton.isInFocusChain()
+            m.saveButton.setFocus(true)
+        end if
         return true
     end if
     

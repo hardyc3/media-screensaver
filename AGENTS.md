@@ -17,6 +17,8 @@
 - Print statements for debugging are acceptable
 - Error handling: check for `invalid` objects before use
 - Registry operations: always check section exists before read/write
+- Event handlers: use `event.getData()` to extract event data
+- Timer duration: use milliseconds (multiply seconds by 1000)
 
 ### XML Components
 - Use proper XML formatting with 4-space indentation
@@ -24,10 +26,11 @@
 - Node IDs: camelCase
 - Layout: use absolute positioning with translation arrays
 - Colors: use 0xRRGGBBAA format
+- Poster elements: set loadDisplayMode="scaleToFit" for proper scaling
 
 ### File Structure
 - Main entry: `source/source/Main.brs`
-- Components: `source/components/*.xml`
+- Components: `source/components/*.xml` and `source/components/*.brs`
 - Manifest: `source/manifest`
 - Images: `source/images/`
 
@@ -35,3 +38,4 @@
 - Store settings in Roku registry under "MediaScreensaver" section
 - Default values should be defined in code
 - Validate user input before saving to registry
+- Use print statements with component name prefix for debugging

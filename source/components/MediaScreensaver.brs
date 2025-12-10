@@ -115,9 +115,10 @@ sub openSettings()
     end if
 
     print "MediaScreenSaver: Create settings screen"
-    settingsScreen = m.top.createChild("SettingsScreen")
+    settingsScreen = CreateObject("roSGNode", "SettingsScreen")
     settingsScreen.ObserveField("close", "onSettingsClosed")
     settingsScreen.visible = true
+    m.top.appendChild(settingsScreen)
 end sub
 
 sub loadConfig()
@@ -162,19 +163,18 @@ sub loadConfig()
 end sub
 
 sub onSettingsClosed(event as Object)
-    print "MediaScreenSaver: Remove settings screen"
+    print "MediaScreenSaver: Settings closed, reloading configuration"
     settingsScreen = event.getRoSGNode()
     settingsScreen.visible = false
     m.top.removeChild(settingsScreen)
 
-    print "MediaScreenSaver: Reload configuration in case it changed"
     loadConfig()
 
     print "MediaScreenSaver: Update timer duration if display time changed"
     
     if m.imageTimer <> invalid
         print "MediaScreenSaver: Updating timer duration to: " + m.config.displayTime.toStr() + " seconds"
-        m.imageTimer.duration = m.config.displayTime * 1000
+        m.imageTimer.duration = m.config.displayTime
     end if
 
     print "MediaScreenSaver: Restart timer and load new image"

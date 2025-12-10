@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<component name="SettingsScreen" extends="Scene">
+<component name="SettingsScreen" extends="Group">
     <children>
         <Rectangle id="background" 
                    width="1920" 
@@ -12,7 +12,6 @@
                height="60" 
                horizAlign="center"
                vertAlign="top"
-               translation="[320, 100]"
                color="0xFFFFFFFF"
                font="font:LargeSystemFont" />
         
@@ -22,7 +21,7 @@
                height="40" 
                horizAlign="left"
                vertAlign="center"
-               translation="[360, 250]"
+               translation="[260, 150]"
                color="0xFFFFFFFF"
                font="font:MediumSystemFont" />
         
@@ -30,12 +29,8 @@
                      text=""
                      width="800"
                      height="50"
-                     translation="[360, 300]"
-                     font="font:MediumSystemFont"
-                     textColor="0x000000FF"
-                     backgroundColor="0xFFFFFFFF"
-                     focusedTextColor="0x000000FF"
-                     focusedBackgroundColor="0x72D7EEFF" />
+                     translation="[260, 200]"
+                     textColor="0x000000FF"/>
         
         <Label id="apiEndpointLabel" 
                text="API Endpoint:"
@@ -43,7 +38,7 @@
                height="40" 
                horizAlign="left"
                vertAlign="center"
-               translation="[360, 400]"
+               translation="[260, 300]"
                color="0xFFFFFFFF"
                font="font:MediumSystemFont" />
         
@@ -51,12 +46,8 @@
                      text=""
                      width="800"
                      height="50"
-                     translation="[360, 450]"
-                     font="font:MediumSystemFont"
-                     textColor="0x000000FF"
-                     backgroundColor="0xFFFFFFFF"
-                     focusedTextColor="0x000000FF"
-                     focusedBackgroundColor="0x72D7EEFF" />
+                     translation="[260, 350]"
+                     textColor="0x000000FF"/>
         
         <Label id="displayTimeLabel" 
                text="Display Time (seconds):"
@@ -64,7 +55,7 @@
                height="40" 
                horizAlign="left"
                vertAlign="center"
-               translation="[360, 550]"
+               translation="[260, 450]"
                color="0xFFFFFFFF"
                font="font:MediumSystemFont" />
         
@@ -72,27 +63,23 @@
                      text=""
                      width="200"
                      height="50"
-                     translation="[360, 600]"
-                     font="font:MediumSystemFont"
-                     textColor="0x000000FF"
-                     backgroundColor="0xFFFFFFFF"
-                     focusedTextColor="0x000000FF"
-                     focusedBackgroundColor="0x72D7EEFF" />
+                     translation="[260, 500]"
+                     textColor="0x000000FF"/>
         
         <Button id="saveButton"
                 text="Save Settings"
-                width="300"
+                minWidth="300"
                 height="60"
-                translation="[810, 700]"
+                translation="[260, 600]"
                 showFocusFootprint="true"
                 focusBitmapUri="pkg:/images/focus-bg.9.png"
                 focusFootprintBitmapUri="pkg:/images/focus-bg.9.png" />
         
         <Button id="cancelButton"
                 text="Cancel"
-                width="300"
+                minWidth="300"
                 height="60"
-                translation="[360, 700]"
+                translation="[560, 600]"
                 showFocusFootprint="true"
                 focusBitmapUri="pkg:/images/focus-bg.9.png"
                 focusFootprintBitmapUri="pkg:/images/focus-bg.9.png" />
@@ -103,10 +90,7 @@
                height="40" 
                horizAlign="center"
                vertAlign="center"
-               translation="[320, 800]"
-               color="0x72D7EEFF"
-               font="font:MediumSystemFont" />
+               translation="[320, 800]"/>
     </children>
-    
     <script type="text/brightscript" uri="SettingsScreen.brs" />
 </component>
