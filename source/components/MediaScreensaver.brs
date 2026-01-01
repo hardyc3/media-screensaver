@@ -3,8 +3,8 @@ sub init()
     m.imagePosterNext = m.top.findNode("imagePosterNext")
         
     ' Observe for when the image is actually loaded
-    m.imagePosterNext.observeField("loadStatus", "onNextImageLoadComplete")
-    m.imagePoster.observeField("loadStatus", "onNextImageLoadComplete")
+    m.imagePosterNext.observeField("loadStatus", "onNextImageLoadComplete1")
+    m.imagePoster.observeField("loadStatus", "onNextImageLoadComplete2")
 
     print "MediaScreenSaver: Load configuration from registry"
     m.config = {}
@@ -35,7 +35,7 @@ sub setupScreenDimensions()
     if displaySize <> invalid
         screenWidth = displaySize.w
         screenHeight = displaySize.h
-        print "MediaScreenSaver: Screen dimensions: " + screenWidth.toStr() + "x" + screenHeight.toStr()
+        'print "MediaScreenSaver: Screen dimensions: " + screenWidth.toStr() + "x" + screenHeight.toStr()
         
         ' Set poster dimensions to match screen
         m.imagePoster.width = screenWidth
@@ -52,12 +52,12 @@ sub setupScreenDimensions()
 end sub
 
 sub loadNextImage()
-    print "MediaScreenSaver: Timer fired, loading next image..."
+    'print "MediaScreenSaver: Timer fired, loading next image..."
     m.imageLoader.serverHost = m.config.mediaServerHost
     m.imageLoader.apiEndpoint = m.config.apiEndpoint
-    print "MediaScreenSaver: Configured ImageLoaderTask with serverHost: " + m.imageLoader.serverHost + " and apiEndpoint: " + m.imageLoader.apiEndpoint
+    'print "MediaScreenSaver: Configured ImageLoaderTask with serverHost: " + m.imageLoader.serverHost + " and apiEndpoint: " + m.imageLoader.apiEndpoint
     
-    print "MediaScreenSaver: Creating image timer with duration: " + m.config.displayTime.toStr() + " seconds"
+    'print "MediaScreenSaver: Creating image timer with duration: " + m.config.displayTime.toStr() + " seconds"
     m.imageTimer.duration = m.config.displayTime     
 
     ' Start the task by setting imagePath to trigger the load
@@ -69,7 +69,7 @@ sub onImageLoaded(event as Object)
     path = event.getData()
 
     if path <> invalid and path <> "" and path <> "trigger"
-        print "MediaScreenSaver: Image loaded successfully: " + path
+        'print "MediaScreenSaver: Image loaded successfully: " + path
         
         ' Load the new image into the hidden poster
         m.imagePosterNext.loadDisplayMode = "scaleToFit"
@@ -79,11 +79,11 @@ sub onImageLoaded(event as Object)
     end if
 end sub
 
-sub onNextImageLoadComplete(event as Object)
+sub onNextImageLoadComplete1(event as Object)
     loadStatus = event.getData()
-    
+    print "MediaScreenSaver1: onNextImageLoadComplete1 called with status: " + loadStatus
     if loadStatus = "ready"
-        print "MediaScreenSaver: Next image ready, performing transition"
+        print "MediaScreenSaver1: Next image ready, performing transition"
         ' Swap the posters - hide current, show next
         m.imagePoster.visible = false
         m.imagePosterNext.visible = true
@@ -98,3 +98,21 @@ sub onNextImageLoadComplete(event as Object)
     end if
 end sub
 
+sub onNextImageLoadComplete2(event as Object)
+    loadStatus = event.getData()
+    print "MediaScreenSaver2: onNextImageLoadComplete2 called with status: " + loadStatus
+    if loadStatus = "ready"
+        print "MediaScreenSaver2: Next image ready, performing transition"
+        ' Swap the posters - hide current, show next
+        m.imagePoster.visible = false
+        m.imagePosterNext.visible = true
+        
+        ' Swap references for next cycle
+        tempPoster = m.imagePoster
+        m.imagePoster = m.imagePosterNext
+        m.imagePosterNext = tempPoster
+        
+        ' Clear the old poster's URI for next use
+        m.imagePosterNext.uri = ""
+    end if
+end sub

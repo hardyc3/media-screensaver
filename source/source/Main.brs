@@ -6,7 +6,8 @@
 '*************************************************************
 
 ' replace Main with RunScreenSaver
-sub Main()
+'sub Main()
+sub RunScreenSaver()
     print "Starting Media Screensaver"
     
     'Indicate this is a Roku SceneGraph application

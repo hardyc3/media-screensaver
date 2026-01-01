@@ -8,6 +8,9 @@
 - `make clean` - Remove build artifacts
 - `make run` - Remove and reinstall app
 
+## Testing Policy
+DO NOT attempt to test this code. The user will handle all testing themselves.
+
 ## Code Style Guidelines
 
 ### BrightScript/SceneGraph

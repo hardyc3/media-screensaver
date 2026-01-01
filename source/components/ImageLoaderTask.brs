@@ -6,25 +6,25 @@ end sub
 
 sub onImagePathChange(event as Object)
     path = event.GetData()
-    print "ImageLoaderTask: imagePath changed to " + path
+    'print "ImageLoaderTask: imagePath changed to " + path
     if path = "trigger"
         loadImage()
     end if
 end sub
 
 sub loadImage()
-    print "ImageLoaderTask: Starting image load"
+    'print "ImageLoaderTask: Starting image load"
     
     ' Construct the URL
     url = "http://" + m.top.serverHost + "/" + m.top.apiEndpoint
-    print "ImageLoaderTask: Loading from URL: " + url
-     ' Create a temporary file to store the image
+    'print "ImageLoaderTask: Loading from URL: " + url
+    ' Create a temporary file to store the image
 
     timestamp = CreateObject("roDateTime").AsSecondsLong().ToStr()
     previous = m.path
     m.path = "tmp:/current_image" + timestamp + ".jpg"
     ' Get the image data directly to file
-    print "ImageLoaderTask: Downloading image to " + m.path
+    'print "ImageLoaderTask: Downloading image to " + m.path
 
     ' Create URL transfer object    
     m.urlTransfer.setUrl(url)
@@ -32,11 +32,11 @@ sub loadImage()
     m.urlTransfer.addHeader("Accept", "image/*")
     responseCode = m.urlTransfer.getToFile(m.path)
     if responseCode = 200
-        print "ImageLoaderTask: Download completed with success"
+        'print "ImageLoaderTask: Download completed with success"
         print "ImageLoaderTask: Image downloaded successfully to " + m.path
         m.top.imagePath = m.path
         if previous <> invalid and previous <> ""
-            print "ImageLoaderTask: Deleting previous " + previous            
+            'print "ImageLoaderTask: Deleting previous " + previous            
             m.fs.Delete(previous)
             DeleteFile(previous)                
         end if
